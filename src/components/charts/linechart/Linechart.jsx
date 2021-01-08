@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Chart } from "react-charts";
-import { Line } from "react-charts";
-import { keyframes } from "styled-components";
+import { Scatter } from "react-chartjs-2";
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
+import Button from "@material-ui/core/Button";
 import {
   SpinnerContainer,
   SpinnerOverlay,
@@ -10,7 +11,8 @@ import {
 // import useChartConfig from "../useChartConfig";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import Tabel from './Table'
+import Tabel from "./Table";
+import { Add } from "@material-ui/icons";
 export default function LineChart() {
   const [coinsList, setCoinsList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -111,7 +113,27 @@ export default function LineChart() {
     //     })
     // }
   }, [coinsOnGraph]);
-
+  const colors = [
+	  'aliceblue', 'aqua', 'azure', 'beige', 'brown', 'black', 'blue', 'blueviolet', 'coral', 'cyan', 'darkblue', 'forestgreen', 'fuchsia',
+	  'gold','darkturquoise'
+  ]
+  var usedColors = []
+  const dataset = {
+    datasets: coinsOnGraph.map((coin) => {
+	
+		var thisColor = colors[Math.floor((Math.random()*colors.length))];
+		while(thisColor in usedColors){
+			thisColor = colors[Math.floor((Math.random()*colors.length))];
+		}
+		usedColors.push(thisColor)
+      return {
+        label: coin.label,
+		data: coin.prices.datums,
+		// pointBackgroundColor: Math.floor(Math.random()*16777215).toString(16),
+		pointBorderColor: thisColor
+      };
+    }),
+  };
   return (
     <div>
       {loading ? (
@@ -120,62 +142,45 @@ export default function LineChart() {
         </SpinnerOverlay>
       ) : (
         <div>
-          {/* <div style={{ width: "100%", height: "500px" }}>
-            <Chart data={data} series={series} axes={axes} tooltip />
-            {cryptoDictionary["bitcoin"] && (
-              <div
-                style={{
-                  width: "100px",
-                  height: "100px",
-                  backgroundColor: "blue",
-                }}
-              >
-                <Line />
+          <div style={{ width: "100%", height: "500px" }}>
+            {/* <Chart data={data} series={series} axes={axes} tooltip /> */}
+            {
+              <div>
+                <Scatter data={dataset} width={"800px"} height={"250px"} />
               </div>
-            )}
-          </div> */}
-          <Autocomplete
-            id="combo-box-demo"
-            options={coinsList}
-            getOptionLabel={(option) => option}
-            freeSolo
-            onChange={(event, newValue) => {
-              setSearchField(newValue ? newValue : "");
-			}}
-            style={{ width: 300, height: 100, margin: "20px" }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Crypto Name"
-                variant="outlined"
-				value={searchField}
-                onChange={(e) => setSearchField(e.target.value)}
-              />
-            )}
-          />
-          <button onClick={() => addNewCrypto(searchField)}>
-            Add to chart
-          </button>
-		  <Tabel rows = {coinsOnGraph}/>
-          {coinsOnGraph.map((coin, index) => {
-
-            return (
-              <div id={coin.label}>
-                <h5>{coin.label}</h5>
-                <button
-                  onClick={() =>
-                    setCoinsOnGraph(
-                      coinsOnGraph.filter(
-                        (moneda) => moneda.label !== coin.label
-                      )
-                    )
-                  }
-                >
-                  Delete
-                </button>
-              </div>
-            );
-          })}
+            }
+          </div>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <Autocomplete
+              id="combo-box-demo"
+              options={coinsList}
+              getOptionLabel={(option) => option}
+              freeSolo
+              onChange={(event, newValue) => {
+                setSearchField(newValue ? newValue : "");
+              }}
+              style={{ width: 300, height: 100, margin: "20px" }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Crypto Name"
+                  variant="outlined"
+                  value={searchField}
+                  onChange={(e) => setSearchField(e.target.value)}
+                />
+              )}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => addNewCrypto(searchField)}
+              style={{ maxHeight: "50px", marginTop: "20px" }}
+            >
+              <AddIcon />
+            </Button>
+          </div>
+          <Tabel rows={coinsOnGraph} setCoinsOnGraph={setCoinsOnGraph} />
+          
         </div>
       )}
     </div>

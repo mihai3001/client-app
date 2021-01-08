@@ -8,7 +8,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from '@material-ui/core/IconButton';
 const columns = [
   { id: "id", label: "Id", minWidth: 100 },
   { id: "delete", label: "delete", minwidth: 50 },
@@ -23,7 +24,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function StickyHeadTable({ rows }) {
+export default function StickyHeadTable({ rows, setCoinsOnGraph }) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -59,12 +60,12 @@ export default function StickyHeadTable({ rows }) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.label}>
+                    <TableCell key={row}>{row.label}</TableCell>
                     <TableCell key={row}>
-                      {row.id}
-                    </TableCell>
-                    <TableCell key={row}>
-                      <DeleteIcon />
+                      <IconButton onClick={()=>setCoinsOnGraph(rows.filter(coin => coin.label !== row.label))}>
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 );
