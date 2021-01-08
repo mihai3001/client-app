@@ -114,23 +114,35 @@ export default function LineChart() {
     // }
   }, [coinsOnGraph]);
   const colors = [
-	  'aliceblue', 'aqua', 'azure', 'beige', 'brown', 'black', 'blue', 'blueviolet', 'coral', 'cyan', 'darkblue', 'forestgreen', 'fuchsia',
-	  'gold','darkturquoise'
-  ]
-  var usedColors = []
+    "aliceblue",
+    "aqua",
+    "azure",
+    "beige",
+    "brown",
+    "black",
+    "blue",
+    "blueviolet",
+    "coral",
+    "cyan",
+    "darkblue",
+    "forestgreen",
+    "fuchsia",
+    "gold",
+    "darkturquoise",
+  ];
+  var usedColors = [];
   const dataset = {
     datasets: coinsOnGraph.map((coin) => {
-	
-		var thisColor = colors[Math.floor((Math.random()*colors.length))];
-		while(thisColor in usedColors){
-			thisColor = colors[Math.floor((Math.random()*colors.length))];
-		}
-		usedColors.push(thisColor)
+      var thisColor = colors[Math.floor(Math.random() * colors.length)];
+      while (thisColor in usedColors) {
+        thisColor = colors[Math.floor(Math.random() * colors.length)];
+      }
+      usedColors.push(thisColor);
       return {
         label: coin.label,
-		data: coin.prices.datums,
-		// pointBackgroundColor: Math.floor(Math.random()*16777215).toString(16),
-		pointBorderColor: thisColor
+        data: coin.prices.datums,
+        // pointBackgroundColor: Math.floor(Math.random()*16777215).toString(16),
+        pointBorderColor: thisColor,
       };
     }),
   };
@@ -141,46 +153,47 @@ export default function LineChart() {
           <SpinnerContainer />
         </SpinnerOverlay>
       ) : (
-        <div>
-          <div style={{ width: "100%", height: "500px" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ width: "100%", height: "400px" }}>
             {/* <Chart data={data} series={series} axes={axes} tooltip /> */}
             {
-              <div>
-                <Scatter data={dataset} width={"800px"} height={"250px"} />
-              </div>
+                <Scatter data={dataset} width={"800px"} height={"200px"}  />
             }
           </div>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <Autocomplete
-              id="combo-box-demo"
-              options={coinsList}
-              getOptionLabel={(option) => option}
-              freeSolo
-              onChange={(event, newValue) => {
-                setSearchField(newValue ? newValue : "");
-              }}
-              style={{ width: 300, height: 100, margin: "20px" }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Crypto Name"
-                  variant="outlined"
-                  value={searchField}
-                  onChange={(e) => setSearchField(e.target.value)}
-                />
-              )}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => addNewCrypto(searchField)}
-              style={{ maxHeight: "50px", marginTop: "20px" }}
-            >
-              <AddIcon />
-            </Button>
+          <div>
+            <div style={{ display: "flex", flexDirection: "row", marginTop:'80px' }}>
+              <Autocomplete
+                id="combo-box-demo"
+                options={coinsList}
+                getOptionLabel={(option) => option}
+                freeSolo
+                onChange={(event, newValue) => {
+                  setSearchField(newValue ? newValue : "");
+                }}
+                style={{ width: 300, height: 100, margin: "20px" }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Crypto Name"
+                    variant="outlined"
+                    value={searchField}
+                    onChange={(e) => setSearchField(e.target.value)}
+                  />
+                )}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => addNewCrypto(searchField)}
+                style={{ maxHeight: "50px", marginTop: "20px" }}
+              >
+                <AddIcon />
+              </Button>
+            </div>
           </div>
-          <Tabel rows={coinsOnGraph} setCoinsOnGraph={setCoinsOnGraph} />
-          
+          <div>
+            <Tabel rows={coinsOnGraph} setCoinsOnGraph={setCoinsOnGraph} />
+          </div>
         </div>
       )}
     </div>
